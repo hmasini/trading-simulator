@@ -8,11 +8,13 @@ CentralLimitOrderBook& MatchingEngine::get_order_book_by_symbol(const std::strin
     return m_order_book_per_symbol[symbol];
 }
 
-void MatchingEngine::add_order(Order incoming_order) 
+order_id_t MatchingEngine::add_order(Order incoming_order) 
 {
     // Generate a unique order ID
     incoming_order.order_id = m_next_order_id++;
     add_order_with_id(incoming_order, incoming_order.order_id);
+
+    return incoming_order.order_id;
 }
 
 bool MatchingEngine::cancel_order(order_id_t order_id)
@@ -58,6 +60,32 @@ bool MatchingEngine::amend_order(order_id_t order_id, double new_price, uint new
         add_order_with_id(amended_order, amended_order.order_id);
     }
     return true;
+}
+
+void MatchingEngine::print_order_book() const
+{
+    for (const auto& [symbol, book] : m_order_book_per_symbol)
+    {
+        std::cout << "Order Book for " << symbol << ":\n";
+        std::cout << "Bids:\n";
+        for (const auto& bid : book.bids)
+        {
+            std::cout << "  Order ID: " << bid.order_id 
+                      << ", Price: " << bid.price 
+                      << ", Quantity: " << bid.quantity 
+                      << ", Timestamp: " << std::chrono::duration_cast<std::chrono::milliseconds>(bid.timestamp.time_since_epoch()).count() 
+                      << "\n";
+        }
+        std::cout << "Asks:\n";
+        for (const auto& ask : book.asks)
+        {
+            std::cout << "  Order ID: " << ask.order_id 
+                      << ", Price: " << ask.price 
+                      << ", Quantity: " << ask.quantity 
+                      << ", Timestamp: " << std::chrono::duration_cast<std::chrono::milliseconds>(ask.timestamp.time_since_epoch()).count() 
+                      << "\n";
+        }
+    }
 }
 
 // PRIVATE METHODS
@@ -109,8 +137,8 @@ void MatchingEngine::match_order(const PriceCondition& price_condition, Order& i
         }
         else
         {
-            it = opposite_side.erase(it);
             m_order_index.erase(it->order_id);
+            it = opposite_side.erase(it);
         }
     }
 }

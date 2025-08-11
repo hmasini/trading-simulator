@@ -3,11 +3,13 @@
 #include "order.hpp"
 #include "order_book.hpp"
 
+#include <map>
+#include <unordered_map>
 class MatchingEngine
 {
 public:
     // Adds an order to the matching engine and processes it against the order book
-    void add_order(Order order);
+    order_id_t add_order(Order order);
     // Cancels an order by its ID
     // Returns true if the order was successfully canceled, false otherwise
     bool cancel_order(order_id_t order_id);
@@ -18,6 +20,8 @@ public:
     CentralLimitOrderBook& get_order_book_by_symbol(const std::string& symbol);
     // Retrieves the list of completed trades
     const std::vector<Trade>& get_trades() const { return m_trades; }
+    // Print the current state of the order book for debugging
+    void print_order_book() const;
 private:
     // Match orders against the opposite side of the book
     template<typename OppositeSide, typename PriceCondition>
