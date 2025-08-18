@@ -9,6 +9,7 @@ Includes unit tests using Google Test.
 - Matching engine for buy/sell orders
 - Order cancellation and amendment
 - Time and price priority matching
+- Bots that pseudo-randomly creates, adds or cancel orders
 - Unit tests for all core functionality
 
 ## Build Instructions

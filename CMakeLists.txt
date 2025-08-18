@@ -13,6 +13,7 @@ include_directories(inc)
 # Collect source files
 set(SOURCES
     src/matching_engine.cpp
+    src/random_bot.cpp
     main.cpp
 )
 

@@ -3,11 +3,15 @@
 #include "order.hpp"
 #include "order_book.hpp"
 
+#include <atomic>
+#include <mutex>
+#include <unordered_map>
+
 class MatchingEngine
 {
 public:
     // Adds an order to the matching engine and processes it against the order book
-    void add_order(Order order);
+    order_id_t add_order(Order order);
     // Cancels an order by its ID
     // Returns true if the order was successfully canceled, false otherwise
     bool cancel_order(order_id_t order_id);
@@ -16,14 +20,20 @@ public:
     bool amend_order(order_id_t order_id, double new_price, uint new_quantity);
     // Retrieves the order book for a specific symbol
     CentralLimitOrderBook& get_order_book_by_symbol(const std::string& symbol);
+    // Retrieves the order books for all symbols
+    const std::unordered_map<std::string, CentralLimitOrderBook>& get_order_book_for_all_symbols() const;
     // Retrieves the list of completed trades
     const std::vector<Trade>& get_trades() const { return m_trades; }
 private:
     // Match orders against the opposite side of the book
     template<typename OppositeSide, typename PriceCondition>
     void match_order(const PriceCondition& price_condition,Order& order, OppositeSide& opposite_side);
-    // Add an order with a unique ID
-    void add_order_with_id(Order& order, order_id_t order_id);
+    // Adds an order while holding the mutex lock
+    void locked_add_order(const Order& order);
+    // Cancels an order while holding the mutex lock
+    bool locked_cancel_order(order_id_t order_id);
+    // Amends an order while holding the mutex lock
+    bool locked_amend_order(order_id_t order_id, double new_price, uint new_quantity);
     // Map of order books by symbol
     std::unordered_map<std::string, CentralLimitOrderBook> m_order_book_per_symbol;
     // Track completed trades
@@ -31,5 +41,7 @@ private:
     // Index map for order lookups
     std::unordered_map<order_id_t, std::multiset<Order>::iterator> m_order_index;
     // For generating unique order IDs
-    order_id_t m_next_order_id = 1;
+    std::atomic<order_id_t> m_next_order_id{1};
+
+    std::mutex m_mutex;
 };
