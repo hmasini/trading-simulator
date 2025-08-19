@@ -41,3 +41,8 @@ struct CentralLimitOrderBook
     std::multiset<Order, BidComparator> bids;
     std::multiset<Order, AskComparator> asks;
 };
+
+struct PriceLevel {
+    double price;
+    uint64_t quantity;
+};

@@ -14,11 +14,17 @@ include_directories(inc)
 set(SOURCES
     src/matching_engine.cpp
     src/random_bot.cpp
+    src/cli.cpp
     main.cpp
 )
 
+find_package(Curses REQUIRED)
+include_directories(${CURSES_INCLUDE_DIR})
+
 # Create executable
 add_executable(trading_sim ${SOURCES})
+
+target_link_libraries(trading_sim ${CURSES_LIBRARIES})
 
 # Unit tests
 enable_testing()

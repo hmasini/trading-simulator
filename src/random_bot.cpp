@@ -25,6 +25,14 @@ void RandomBot::start_thread()
     });
 }
 
+void RandomBot::stop_thread()
+{
+    if (m_thread.joinable()) {
+        m_thread.request_stop();
+        m_thread.join();
+    }
+}
+
 // PRIVATE METHODS
 void RandomBot::step()
 {

@@ -18,10 +18,10 @@ struct Order
     Side side;
     double price;
     mutable uint quantity;
-    std::chrono::time_point<std::chrono::steady_clock> timestamp;
+    std::chrono::time_point<std::chrono::system_clock> timestamp;
 
     Order(std::string symbol, Side side, double price, uint quantity)
-        : symbol(symbol), side(side), price(price), quantity(quantity), timestamp(std::chrono::steady_clock::now()) {}
+        : symbol(symbol), side(side), price(price), quantity(quantity), timestamp(std::chrono::system_clock::now()) {}
 };
 
 struct Trade
@@ -31,9 +31,9 @@ struct Trade
     std::string symbol;
     double price;
     uint quantity;
-    std::chrono::time_point<std::chrono::steady_clock> timestamp;
+    std::chrono::time_point<std::chrono::system_clock> timestamp;
 
-    Trade(int buy_order_id, int sell_order_id, std::string symbol, double price, uint quantity, std::chrono::time_point<std::chrono::steady_clock> timestamp)
+    Trade(int buy_order_id, int sell_order_id, std::string symbol, double price, uint quantity, std::chrono::time_point<std::chrono::system_clock> timestamp)
         : buy_order_id(buy_order_id), sell_order_id(sell_order_id), symbol(symbol), price(price), quantity(quantity), timestamp(timestamp) {}
 };
 

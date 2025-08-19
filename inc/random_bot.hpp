@@ -12,6 +12,7 @@ public:
     RandomBot(std::shared_ptr<MatchingEngine> engine, uint64_t id);
     // Starts the bot's thread - performs random actions like placing, amending, or canceling orders
     void start_thread();
+    void stop_thread();
 private:
     // Bot's action logic
     void step();

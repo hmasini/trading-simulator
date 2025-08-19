@@ -2,9 +2,8 @@
 #include "order_book.hpp"
 
 #include <atomic>
-#include <iostream>
 #include <mutex>
-
+#include <map>
 
 const std::unordered_map<std::string, CentralLimitOrderBook>& MatchingEngine::get_order_book_for_all_symbols() const
 {
@@ -37,6 +36,57 @@ bool MatchingEngine::amend_order(order_id_t order_id, double new_price, uint new
 CentralLimitOrderBook& MatchingEngine::get_order_book_by_symbol(const std::string& symbol)
 {
     return m_order_book_per_symbol[symbol];
+}
+
+std::vector<PriceLevel> MatchingEngine::get_top_bids(const std::string& symbol, size_t depth) 
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    std::vector<PriceLevel> out;
+    auto it = m_order_book_per_symbol.find(symbol);
+    if (it == m_order_book_per_symbol.end()) return out;
+
+    // aggregate quantities by price
+    std::map<double, uint64_t, std::greater<>> agg;
+    for (const auto& o : it->second.bids) agg[o.price] += o.quantity;
+
+    out.reserve(std::min(depth, agg.size()));
+    for (auto a = agg.begin(); a != agg.end() && out.size() < depth; ++a)
+        out.push_back(PriceLevel{a->first, a->second});
+    return out;
+}
+
+std::vector<PriceLevel> MatchingEngine::get_top_asks(const std::string& symbol, size_t depth) 
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    std::vector<PriceLevel> out;
+    auto it = m_order_book_per_symbol.find(symbol);
+    if (it == m_order_book_per_symbol.end()) return out;
+
+    std::map<double, uint64_t> agg;
+    for (const auto& o : it->second.asks) agg[o.price] += o.quantity;
+
+    out.reserve(std::min(depth, agg.size()));
+    for (auto a = agg.begin(); a != agg.end() && out.size() < depth; ++a)
+        out.push_back(PriceLevel{a->first, a->second});
+    return out;
+}
+
+std::vector<Trade> MatchingEngine::get_recent_trades(size_t count)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if (m_trades.size() <= count) return m_trades;
+    return std::vector<Trade>(m_trades.end() - count, m_trades.end());
+}
+
+std::vector<Trade> MatchingEngine::get_recent_trades_for_symbol(const std::string& symbol, size_t count)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    std::vector<Trade> filtered;
+    filtered.reserve(std::min(count, m_trades.size()));
+    for (auto it = m_trades.rbegin(); it != m_trades.rend() && filtered.size() < count; ++it)
+        if (it->symbol == symbol) filtered.push_back(*it);
+    std::reverse(filtered.begin(), filtered.end());
+    return filtered;
 }
 
 // PRIVATE METHODS
@@ -124,7 +174,7 @@ void MatchingEngine::match_order(const PriceCondition& price_condition, Order& i
         int match_quantity = std::min(incoming_order.quantity, it->quantity);
 
         m_trades.emplace_back(
-            incoming_order.order_id, it->order_id, incoming_order.symbol, it->price, match_quantity, std::chrono::steady_clock::now());
+            incoming_order.order_id, it->order_id, incoming_order.symbol, it->price, match_quantity, std::chrono::system_clock::now());
 
         incoming_order.quantity -= match_quantity;
 

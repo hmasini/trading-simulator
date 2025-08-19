@@ -24,6 +24,12 @@ public:
     const std::unordered_map<std::string, CentralLimitOrderBook>& get_order_book_for_all_symbols() const;
     // Retrieves the list of completed trades
     const std::vector<Trade>& get_trades() const { return m_trades; }
+    // Aggregated top-of-book for a given symbol (copy under lock)
+    std::vector<PriceLevel> get_top_bids(const std::string& symbol, size_t depth);
+    std::vector<PriceLevel> get_top_asks(const std::string& symbol, size_t depth);
+    // Recent trades snapshot (copy under lock, optionally filtered by symbol)
+    std::vector<Trade> get_recent_trades(size_t count);
+    std::vector<Trade> get_recent_trades_for_symbol(const std::string& symbol, size_t count);
 private:
     // Match orders against the opposite side of the book
     template<typename OppositeSide, typename PriceCondition>
