@@ -2,6 +2,7 @@
 
 #include "order.hpp"
 #include "order_book.hpp"
+#include "logger.hpp"
 
 #include <atomic>
 #include <mutex>
@@ -10,6 +11,8 @@
 class MatchingEngine
 {
 public:
+    MatchingEngine(std::shared_ptr<Logger> logger);
+    ~MatchingEngine() = default;
     // Adds an order to the matching engine and processes it against the order book
     order_id_t add_order(Order order);
     // Cancels an order by its ID
@@ -48,6 +51,8 @@ private:
     std::unordered_map<order_id_t, std::multiset<Order>::iterator> m_order_index;
     // For generating unique order IDs
     std::atomic<order_id_t> m_next_order_id{1};
+    // Logger instance for logging orders and trades
+    std::shared_ptr<Logger> m_logger;
 
     std::mutex m_mutex;
 };

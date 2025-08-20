@@ -11,18 +11,6 @@ static std::string fmt_px(double p) {
 static std::string fmt_qty(uint64_t q) {
     return std::to_string(q);
 }
-static std::string fmt_time(const std::chrono::system_clock::time_point& tp) {
-    auto t = std::chrono::system_clock::to_time_t(tp);
-    std::tm buf{};
-#ifdef _WIN32
-    localtime_s(&buf, &t);
-#else
-    localtime_r(&t, &buf);
-#endif
-    char out[16];
-    std::strftime(out, sizeof(out), "%H:%M:%S", &buf);
-    return out;
-}
 
 static void render_symbol_header(const std::string& symbol, size_t depth, int cols, int asks_col)
 {

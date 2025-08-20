@@ -15,6 +15,7 @@ set(SOURCES
     src/matching_engine.cpp
     src/random_bot.cpp
     src/cli.cpp
+    src/logger.cpp
     main.cpp
 )
 

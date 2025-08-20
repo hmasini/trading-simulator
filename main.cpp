@@ -10,7 +10,8 @@
 
 int main() {
 
-    auto matching_engine = std::make_shared<MatchingEngine>();
+    auto logger = std::make_shared<Logger>("trading.log");
+    auto matching_engine = std::make_shared<MatchingEngine>(logger);
 
     const size_t depth = 50;
     const size_t lastTrades = 12;
@@ -40,6 +41,7 @@ int main() {
     // --- teardown ---
     shutdown_cli();
     for (auto& bot : bots) bot->stop_thread();
+    logger->dump();
 
     return 0;
 }

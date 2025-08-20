@@ -1,9 +1,16 @@
 #include "matching_engine.hpp"
+#include "logger.hpp"
+#include "order.hpp"
 #include "order_book.hpp"
 
 #include <atomic>
 #include <mutex>
 #include <map>
+
+MatchingEngine::MatchingEngine(std::shared_ptr<Logger> logger)
+    : m_logger(std::move(logger))
+{
+}
 
 const std::unordered_map<std::string, CentralLimitOrderBook>& MatchingEngine::get_order_book_for_all_symbols() const
 {
@@ -14,10 +21,12 @@ order_id_t MatchingEngine::add_order(Order incoming_order)
 {
     // Generate a unique order ID
     incoming_order.order_id = m_next_order_id.fetch_add(1, std::memory_order_relaxed);
-    
+
     std::lock_guard<std::mutex> lock(m_mutex);
     locked_add_order(incoming_order);
 
+    m_logger->log_order(EventType::ADD, to_string(incoming_order));
+    
     return incoming_order.order_id;
 }
 
@@ -122,6 +131,8 @@ bool MatchingEngine::locked_cancel_order(order_id_t order_id)
     if (it == m_order_index.end()) { return false ;}
 
     auto set_it = it->second;
+    m_logger->log_order(EventType::CANCEL, to_string(*set_it));
+
     auto& order_book = get_order_book_by_symbol(set_it->symbol);
     m_order_index.erase(it);
     if (set_it->side == Side::BUY)
@@ -142,6 +153,8 @@ bool MatchingEngine::locked_amend_order(order_id_t order_id, double new_price, u
     if (it == m_order_index.end()) { return false; }
 
     auto order_it = it->second;
+    m_logger->log_order(EventType::AMEND, to_string(*it->second));
+
     order_it->quantity = new_quantity;
 
     if (new_price != order_it->price)
@@ -161,6 +174,7 @@ bool MatchingEngine::locked_amend_order(order_id_t order_id, double new_price, u
         amended_order.price = new_price;
         locked_add_order(amended_order);
     }
+
     return true;
 }
 
@@ -176,6 +190,8 @@ void MatchingEngine::match_order(const PriceCondition& price_condition, Order& i
         m_trades.emplace_back(
             incoming_order.order_id, it->order_id, incoming_order.symbol, it->price, match_quantity, std::chrono::system_clock::now());
 
+        m_logger->log_order(EventType::TRADE, to_string(m_trades.back()));
+
         incoming_order.quantity -= match_quantity;
 
         if (it->quantity > match_quantity)
@@ -189,4 +205,3 @@ void MatchingEngine::match_order(const PriceCondition& price_condition, Order& i
         }
     }
 }
-

@@ -12,8 +12,8 @@ FetchContent_MakeAvailable(googletest)
 # Link gtest to your tests
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-add_executable(test_matching_engine test_matching_engine.cpp ../src/matching_engine.cpp)
+add_executable(test_matching_engine test_matching_engine.cpp ../src/matching_engine.cpp ../src/logger.cpp logger_mock.hpp)
 target_include_directories(test_matching_engine PRIVATE ../inc)
-target_link_libraries(test_matching_engine gtest gtest_main)
+target_link_libraries(test_matching_engine gmock gtest gtest_main pthread)
 
 add_test(NAME TestMatchingEngine COMMAND test_matching_engine)
