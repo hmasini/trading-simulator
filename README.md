@@ -14,6 +14,14 @@ A simple trading simulator featuring a C++20 matching engine, central limit orde
 - Logging and CSV export for trades and orders
 - Unit tests for the matching engine
 
+## System diagram
+
+![System Diagram](https://github.com/hmasini/trading-simulator/blob/main/docs/system-diagram.png)
+
+## Frontend
+
+![Front end](https://github.com/hmasini/trading-simulator/blob/main/docs/simulator.png)
+
 ## Project Structure
 
 ```
