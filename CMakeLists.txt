@@ -16,16 +16,33 @@ set(SOURCES
     src/random_bot.cpp
     src/cli.cpp
     src/logger.cpp
-    main.cpp
+    src/main.cpp
 )
 
 find_package(Curses REQUIRED)
 include_directories(${CURSES_INCLUDE_DIR})
 
+find_package(Boost REQUIRED COMPONENTS system thread)
+include_directories(${Boost_INCLUDE_DIRS})
+
+find_package(nlohmann_json REQUIRED)
+
 # Create executable
 add_executable(trading_sim ${SOURCES})
 
+# Create executable for WebSocket server
+add_executable(ws_server src/ws_server.cpp)
+
+add_library(trading_sim_lib
+    src/matching_engine.cpp
+    src/random_bot.cpp
+    src/cli.cpp
+    src/logger.cpp
+)
+
 target_link_libraries(trading_sim ${CURSES_LIBRARIES})
+
+target_link_libraries(ws_server trading_sim_lib ${Boost_LIBRARIES} nlohmann_json::nlohmann_json)
 
 # Unit tests
 enable_testing()

@@ -1,7 +1,7 @@
 #pragma once
 #include <set>
 
-#include "order.hpp"
+#include "order_types.hpp"
 
 
 // price-time priority for orders
@@ -42,7 +42,3 @@ struct CentralLimitOrderBook
     std::multiset<Order, AskComparator> asks;
 };
 
-struct PriceLevel {
-    double price;
-    uint64_t quantity;
-};

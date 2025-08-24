@@ -1,6 +1,6 @@
 #pragma once
 
-#include "order.hpp"
+#include "order_types.hpp"
 #include "order_book.hpp"
 #include "logger.hpp"
 
@@ -11,7 +11,7 @@
 class MatchingEngine
 {
 public:
-    MatchingEngine(std::shared_ptr<Logger> logger);
+    MatchingEngine(std::shared_ptr<Logger> logger = nullptr);
     ~MatchingEngine() = default;
     // Adds an order to the matching engine and processes it against the order book
     order_id_t add_order(Order order);
@@ -31,8 +31,11 @@ public:
     std::vector<PriceLevel> get_top_bids(const std::string& symbol, size_t depth);
     std::vector<PriceLevel> get_top_asks(const std::string& symbol, size_t depth);
     // Recent trades snapshot (copy under lock, optionally filtered by symbol)
-    std::vector<Trade> get_recent_trades(size_t count);
+    std::vector<Trade> get_recent_trades(size_t count = 100);
+    // Recent trades snapshot for a specific symbol (copy under lock)
     std::vector<Trade> get_recent_trades_for_symbol(const std::string& symbol, size_t count);
+    // Order book snapshot for all symbols with a depth to limit the amount of results (copy under lock)
+    std::vector<OrderBookSnapshot> get_order_book_snapshot(size_t depth = 10);
 private:
     // Match orders against the opposite side of the book
     template<typename OppositeSide, typename PriceCondition>

@@ -32,8 +32,6 @@ int main() {
     while (running)
     {
         erase();
-        auto order_book_for_all_symbols = matching_engine->get_order_book_for_all_symbols();
-
         render_market_dashboard(matching_engine, depth, lastTrades, running);
         std::this_thread::sleep_for(std::chrono::milliseconds(80)); // ~12.5 FPS
     }

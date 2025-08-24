@@ -1,3 +1,16 @@
 build/*
 .cache/
 compile_commands.json
+.vscode/
+/trading-frontend/node_modules/
+/trading-frontend/build/
+/trading-frontend/.env.local
+/trading-frontend/.env.development.local
+/trading-frontend/.env.test.local
+/trading-frontend/.env.production.local
+
+# Logs
+*.log
+
+# CSV exports
+*.csv

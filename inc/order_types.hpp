@@ -79,3 +79,16 @@ inline std::string to_string(EventType event)
     }
 }
 
+
+struct PriceLevel {
+    double price;
+    uint64_t quantity;
+};
+
+struct OrderBookSnapshot
+{
+    std::string symbol;
+    std::vector<PriceLevel> bids;
+    std::vector<PriceLevel> asks;
+};
+
