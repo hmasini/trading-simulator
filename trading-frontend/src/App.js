@@ -41,18 +41,18 @@ function CandlestickChart({ trades }) {
 
   const options = {
     legend: 'none',
-    backgroundColor: '#232323',
+    backgroundColor: '#f7f7fa', // Off-white background
     candlestick: {
       fallingColor: { strokeWidth: 0, fill: '#f44336' },
       risingColor: { strokeWidth: 0, fill: '#4caf50' }
     },
-    hAxis: { textStyle: { color: '#fff' } },
-    vAxis: { textStyle: { color: '#fff' } }
+    hAxis: { textStyle: { color: '#222' } },
+    vAxis: { textStyle: { color: '#222' } }
   };
 
   return (
-    <div className="candlestick-container">
-      <h2 style={{ color: '#fff', marginBottom: '1rem', fontWeight: 600 }}>Candlestick Chart</h2>
+    <div className="candlestick-container" style={{ background: '#f7f7fa', color: '#222', borderRadius: '16px', padding: '2rem 2.5rem', margin: '2rem 0', boxShadow: '0 4px 24px rgba(76,175,80,0.06)' }}>
+      <h2 style={{ color: '#4caf50', marginBottom: '1rem', fontWeight: 600 }}>Candlestick Chart</h2>
       <Chart
         chartType="CandlestickChart"
         width="100%"
@@ -121,8 +121,15 @@ function App() {
   console.log("trades for symbol", tradesForSymbol.length);
 
   return (
-    <div className="App" style={{ background: '#181818', color: '#fff', minHeight: '100vh', padding: '2rem' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '2.5rem', letterSpacing: '2px' }}>
+    <div className="App" style={{ background: '#f7f7fa', color: '#222', minHeight: '100vh', padding: '2rem' }}>
+      <h1 style={{
+        textAlign: 'center',
+        marginBottom: '2rem',
+        fontSize: '2.5rem',
+        letterSpacing: '2px',
+        color: '#4caf50',
+        fontWeight: 700
+      }}>
         Trading Simulator
       </h1>
       <div className="tabs" style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem', gap: '1rem' }}>
@@ -131,15 +138,17 @@ function App() {
             key={ob.symbol}
             className={`tab-btn${selectedSymbol === ob.symbol ? ' active' : ''}`}
             style={{
-              background: selectedSymbol === ob.symbol ? '#333' : '#222',
-              color: '#fff',
+              background: selectedSymbol === ob.symbol ? '#fff' : '#eaeaea',
+              color: selectedSymbol === ob.symbol ? '#4caf50' : '#222',
               border: 'none',
-              borderBottom: selectedSymbol === ob.symbol ? '2px solid #4caf50' : '2px solid transparent',
-              padding: '0.5rem 1.5rem',
-              borderRadius: '8px 8px 0 0',
+              borderBottom: selectedSymbol === ob.symbol ? '3px solid #4caf50' : '3px solid transparent',
+              padding: '0.75rem 2rem',
+              borderRadius: '24px 24px 0 0',
               cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: '1rem'
+              fontWeight: 700,
+              fontSize: '1.1rem',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+              transition: 'background 0.2s, border-bottom 0.2s'
             }}
             onClick={() => setSelectedSymbol(ob.symbol)}
           >

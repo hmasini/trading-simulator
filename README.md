@@ -109,6 +109,3 @@ The frontend will connect to the WebSocket server at `ws://localhost:9001` by de
 - View live order book, trades, and candlestick charts in your browser.
 - Use the CLI or bots to simulate trading activity.
 
-## Documentation
-
-- See `docs/flowchart.md` for a system context diagram (Mermaid).

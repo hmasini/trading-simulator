@@ -7,6 +7,7 @@
 #include <atomic>
 #include <mutex>
 #include <unordered_map>
+#include <memory>
 
 class MatchingEngine
 {
