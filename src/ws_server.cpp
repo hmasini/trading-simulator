@@ -105,16 +105,17 @@ int main()
                 json j;
                 to_json(j["order_books"], matching_engine->get_order_book_snapshot());
                 to_json(j["recent_trades"], matching_engine->get_recent_trades());
-                std::cout << j.dump() << "\n";
                 ws.write(boost::asio::buffer(j.dump()));
                 std::this_thread::sleep_for(std::chrono::seconds(1));
-                std::cout << "Sent order book snapshot\n";
             }
         }
         catch (const std::exception& e)
         {
             std::cerr << "Websocket error: " << e.what() << "\n";
-            break;
+            boost::system::error_code ec;
+            ws.close(websocket::close_code::normal, ec);
+            // Continue to accept new clients
+            continue;
         }
     }
 

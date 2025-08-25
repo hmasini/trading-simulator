@@ -116,7 +116,7 @@ function App() {
 
   const currentBook = orderBooks.find(ob => ob.symbol === selectedSymbol);
   const tradesForSymbolRaw = recentTrades.filter(t => t.symbol === selectedSymbol);
-  const tradesForSymbol = tradesForSymbolRaw.slice(-200); // Limit to last 200 trades
+  const tradesForSymbol = tradesForSymbolRaw.slice(-400); // Limit to last 400 trades
 
   console.log("trades for symbol", tradesForSymbol.length);
 

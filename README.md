@@ -109,3 +109,48 @@ The frontend will connect to the WebSocket server at `ws://localhost:9001` by de
 - View live order book, trades, and candlestick charts in your browser.
 - Use the CLI or bots to simulate trading activity.
 
+---
+
+## Running via Docker
+
+You can run both the backend and frontend using Docker.
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed.
+
+### Build and Start All Services
+
+From your project root:
+
+```sh
+docker compose build --no-cache
+docker compose up
+```
+
+- The backend WebSocket server will run in one container (port `9001`).
+- The React frontend will run in another container (port `3000`).
+
+### Access the Frontend
+
+Open your browser and go to:  
+[http://localhost:3000](http://localhost:3000)
+
+The frontend will connect to the backend WebSocket server automatically.
+
+### Stopping the Services
+
+Press `Ctrl+C` in your terminal, or run:
+
+```sh
+docker compose down
+```
+
+---
+
+**Note:**  
+If you make changes to the source code, rebuild the images with:
+
+```sh
+docker compose build --no-cache
+```

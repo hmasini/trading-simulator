@@ -13,7 +13,7 @@ WORKDIR /app
 COPY . .
 
 # Build the backend
-RUN mkdir -p build && cd build && cmake .. && make
+RUN mkdir -p build && cd build && cmake .. && make && ls -l && cd .. && ls -l
 
 # Expose WebSocket server port
 EXPOSE 9001
